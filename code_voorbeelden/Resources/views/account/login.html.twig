@@ -1,0 +1,7 @@
+{% extends '_base/html.html.twig' %}
+
+{% block page %}
+    <article class="user-login user-login--fallback-page" data-view="user-login">
+        {% include directory ~ '/components/security/login-form.twig.html' %}
+    </article>
+{% endblock %}

@@ -1,0 +1,170 @@
+{% from directory ~ '/components/icon/icon.html.twig' import icon %}
+
+<div class="login-form-wrapper" data-login-modal-form>
+    {% if modal != 1 %}
+        {% if  error.messageKey %}
+        <div class="error-message">{{ error.messageKey | t }}</div>
+        {% endif %}
+        {% if errors %}
+        <div class="error-message">
+            {% for error in errors %}
+            {{ error.message | t }}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% for message in app.flashes('success') %}
+            <div class="success-message">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="login-form">
+        {% if modal %}
+            {% set signin_url   = path('account_login_modal') %}
+            {% set reg_url      = path('account_register_modal') %}
+            {% set class_name   = 'user-login-form' %}
+            {% set err_class    = 'username_fieldset' %}
+        {% else %}
+            {% set signin_url   = path('account_login') %}
+            {% set reg_url      = path('account_register') %}
+            {% set class_name   = '' %}
+            {% set err_class    = '' %}
+        {%  endif %}
+        <nav class="login-form__tabs">
+            <ul>
+                <li><a id="login_tab" {% if  not register_tab %}class="active"{% endif %} href="#tab-login" data-content="login">{{ 'Sign in' | t }}</a></li>
+                <li><a id="register_tab" {% if register_tab %}class="active"{% endif %}href="#tab-register" data-content="register" class="">{{ 'Register' | t }}</a></li>
+            </ul>
+        </nav>
+
+        <div id="login">
+            <form class="{{ class_name }}" action="{{ signin_url }}" method="post" data-user-login-form>
+                {% if _target_path %}
+                <input type="hidden" name="_target_path" value="{{ _target_path }}" />
+                {% endif %}
+                {% if _origin %}
+                <input type="hidden" name="_origin" value="{{ _origin }}" />
+                {% endif %}
+                {% if csrf_token('authenticate') %}
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+                {% endif %}
+                <fieldset class="fieldset fieldset--full-width">
+                {% if account.login_url_facebook %}
+                    <a id="fblogin" class="button login-button login-button__facebook" href="{{ account.login_url_facebook }}" data-login-button data-form-type="login" data-button-type="Facebook">
+                        <span class="sc-icon">
+                            <svg role="img" viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22.676 0H1.324C.593 0 0 .593 0 1.324v21.352C0 23.408.593 24 1.324 24h11.494v-9.294H9.689v-3.621h3.129V8.41c0-3.099 1.894-4.785 4.659-4.785 1.325 0 2.464.097 2.796.141v3.24h-1.921c-1.5 0-1.792.721-1.792 1.771v2.311h3.584l-.465 3.63H16.56V24h6.115c.733 0 1.325-.592 1.325-1.324V1.324C24 .593 23.408 0 22.676 0"></path></svg>
+                        </span>
+                        {{'Login with Facebook'|t}}
+                    </a><br />
+                {% endif %}
+
+                {% if account.login_url_google %}
+                    <a id="modal_googlelogin" class="button login-button login-button__google" href="{{ account.login_url_google }}" data-login-button data-form-type="login" data-button-type="Google">
+                        <span class="sc-icon">
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 48 48" class="abcRioButtonSvg"><g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g></svg>
+                        </span>
+                        {{'Login with Google'|t}}
+                    </a>
+                    {% endif %}
+                </fieldset>
+
+                <div class="or"><span>or</span></div>
+
+                <fieldset class="{{ err_class }} fieldset fieldset--full-width">
+                    <label for="username" class="fieldset__label">{{ 'Email' | t }}</label>
+                    <input type="text" id="{{ (modal == 1) ? 'modal_username' : 'username' }}" name="_username" class="fieldset__input" value="{{ last_username }}" placeholder="{{ 'Email' | t }}"/>
+                </fieldset>
+                <fieldset class="fieldset fieldset--full-width">
+                    <label for="password" class="fieldset__label">{{ 'Password' | t }}</label>
+                    <input type="password" id="{{ (modal == 1) ? 'modal_password' : 'password' }}" name="_password" class="fieldset__input" placeholder="{{ 'Password' | t }}"/>
+                </fieldset>
+                <fieldset>
+                    <input type="checkbox" id="remember_me" name="_remember_me" value="on" checked />
+                    <label for="remember_me">keep me logged in</label>
+                </fieldset>
+                <fieldset class="fieldset fieldset--full-width">
+                    <button type="submit" class="button button--brand login-button" data-login-button data-form-type="login" data-button-type="Email">{{ 'Login' | t }}</button>
+                </fieldset>
+                <fieldset class="fieldset">
+                    <span class="reset_password__text"><a href="{{ path('account_forgotpassword') }}">{{ 'Forgot password' | t }}</a></span>
+                </fieldset>
+                <fieldset class="fieldset">
+                    <span class="terms__text">{{ 'By signing in you accept the Tradus' | t}} <a href="https://tradus.zendesk.com/hc/en-us/articles/115001631049">{{ 'Terms of use' | t }}</a>.</span>
+                </fieldset>
+                {% if modal %}
+                    <input type="hidden" name="ajax_request" value="true" />
+                {% endif %}
+            </form>
+        </div>
+
+        <div id="register">
+            <form class="{{ class_name }}" action="{{ reg_url }}" method="post" data-user-register-form>
+                {% if _target_path %}
+                <input type="hidden" name="_target_path" value="{{ _target_path }}" />
+                {% endif %}
+                {% if _origin %}
+                <input type="hidden" name="_origin" value="{{ _origin }}" />
+                {% endif %}
+                {% if csrf_token('authenticate') %}
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+                {% endif %}
+
+                <fieldset class="fieldset fieldset--full-width">
+                    {% if account.login_url_facebook %}
+                    <a id="fblogin" class="button login-button login-button__facebook" href="{{ account.login_url_facebook }}" data-login-button data-form-type="registration" data-button-type="Facebook">
+                        <span class="sc-icon">
+                            <svg role="img" viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M22.676 0H1.324C.593 0 0 .593 0 1.324v21.352C0 23.408.593 24 1.324 24h11.494v-9.294H9.689v-3.621h3.129V8.41c0-3.099 1.894-4.785 4.659-4.785 1.325 0 2.464.097 2.796.141v3.24h-1.921c-1.5 0-1.792.721-1.792 1.771v2.311h3.584l-.465 3.63H16.56V24h6.115c.733 0 1.325-.592 1.325-1.324V1.324C24 .593 23.408 0 22.676 0"></path></svg>
+                        </span>
+                        {{'Register with Facebook'|t}}
+                    </a><br />
+                    {% endif %}
+
+                    {% if account.login_url_google %}
+                    <a id="fblogin" class="button login-button login-button__google" href="{{ account.login_url_google }}" data-login-button data-form-type="registration" data-button-type="Google">
+                        <span class="sc-icon">
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 48 48" class="abcRioButtonSvg"><g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g></svg>
+                        </span>
+                        {{'Register with Google'|t}}
+                    </a>
+                    {% endif %}
+                </fieldset>
+
+                <div class="or"><span>{{ 'or' | t }}</span></div>
+
+                <fieldset class="{{ err_class }} fieldset fieldset--full-width">
+                    <label for="username" class="fieldset__label">{{ 'Email' | t }}</label>
+                    <input type="text" id="username" name="username" class="fieldset__input" value="{{ last_username }}" placeholder="{{ 'Email' | t }}"/>
+                 </fieldset>
+                <fieldset class="fieldset fieldset--full-width">
+                    <label for="password" class="fieldset__label">{{ 'Password' | t }}
+                    </label>
+                    <div class="button-inside">
+                        <input type="password" id="password" name="password" class="fieldset__input reg-pwd" placeholder="{{ 'Your Password' | t }}" />
+                        <a href="javascript:;" class="" data-show-icon id="show-icon" data-enhanced="true"   rel="nofollow" style="" >
+                            <span data-icon-hide style="">{{ icon('eye') }}</span>
+                            <span data-icon-show style="display: none; ">{{ icon('eye-blocked') }}</span>
+                        </a>
+                    </div>
+                </fieldset>
+                <fieldset class="fieldset fieldset--full-width">
+                    <input id="checkbox_accept-terms" type="checkbox" name="acceptterms" {% if last_acceptTerms %}checked{% endif %}>
+                    <label for="checkbox_accept-terms" class="fieldset__label">
+                        <span>{{ 'I accept the Tradus' | t }} <a href="https://tradus.zendesk.com/hc/en-us/articles/115001631049-Terms-and-Conditions">{{ 'Terms of use' | t}}</a>.<br />
+
+                        I acknowledge that OLX Global B.V. uses my personal data according to the <a href="https://tradus.zendesk.com/hc/en-us/articles/360000901425" target="_blank">Privacy Statement</a> and the
+                        <a href="https://tradus.zendesk.com/hc/en-us/articles/360000889385" target="_blank">Policy on Cookies and Similar Technologies</a>.
+                            OLX Global B.V. uses automated systems and partners to analyze how I use the services to provide relevant product functionality, content, targeted and interest-based advertising, as well as protection against spam, malware, and unauthorized use.</span>
+                    </label>
+                </fieldset>
+                <fieldset class="fieldset fieldset--full-width">
+                    <button type="submit" class="button button--brand login-button" data-login-button data-form-type="registration" data-button-type="Email">{{ 'Register' | t }}</button>
+                </fieldset>
+                {% if modal %}
+                    <input type="hidden" name="ajax_request" value="true" />
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>

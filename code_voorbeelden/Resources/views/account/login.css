@@ -1,0 +1,20 @@
+@import '../../components/security/login-form.css';
+
+/*.login-page {*/
+    /*max-width: 1160px;*/
+    /*margin-left: auto;*/
+    /*margin-right: auto;*/
+    /*position: relative;*/
+/*}*/
+
+.user-login {
+    margin-bottom: var(--grid-padding-medium);
+    margin-top: var(--grid-padding-medium);
+}
+
+@media screen and (min-width: 750px) {
+    .user-login {
+        margin-bottom: 60px;
+        margin-top: 32px;
+    }
+}

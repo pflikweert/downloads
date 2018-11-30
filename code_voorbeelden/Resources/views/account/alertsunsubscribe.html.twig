@@ -1,0 +1,47 @@
+{% extends '_base/html.html.twig' %}
+
+{% block page %}
+<style>
+    .offer-cards__content { flex-wrap: wrap !important;}
+    @media screen and (min-width: 1024px) {
+        .offer-card {
+            max-width: 182px;
+        }
+    }
+</style>
+<article class="user-login user-login--fallback-page" data-view="user-login">
+    <div class="login-form-wrapper" style="max-width: 800px !important; min-width:380px;">
+        {% if show_confirm %}
+        <form action="{{ path('account_unsubscribe_alerts') }}" method="post">
+            <fieldset class="fieldset fieldset--full-width">
+                <h2>{{ 'Unsubscribe Alerts' | t }}</h2>
+                {% if alert.status != '-10' %}
+                <p>{{ 'You will stop receiving alerts about new equipment based on the following offers:' | t }}</p>
+                {% else %}
+                <p>{{ 'You are already unsubscribed' | t }}</p>
+                {% endif %}
+
+                {% include directory ~ '/components/offer-cards/offer-cards.html.twig' with { offers: offers }%}
+
+                <input type="hidden" name="id" value="{{ alert_id }}"/>
+                <input type="hidden" name="uid" value="{{ user_id }}"/>
+                <input type="hidden" name="_confirm" value="true" />
+
+            </fieldset>
+            <fieldset class="fieldset fieldset--full-width">
+                {% if alert.status != '-10' %}
+                <button type="submit" class="button button--brand login-button">{{ 'Unsubscribe' | t }}</button>
+                {% endif %}
+            </fieldset>
+        </form>
+        {% endif %}
+        {% if show_succes %}
+         <h2>{{ 'Thank you, your subscription preferences have been updated.' | t }}</h2>
+         <p>{{ 'You will not receive any updates anymore about the following offers:' | t }}</p>
+
+         {% include directory ~ '/components/offer-cards/offer-cards.html.twig' with { offers: offers }%}
+
+        {% endif %}
+    </div>
+</article>
+{% endblock %}

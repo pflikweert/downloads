@@ -1,0 +1,45 @@
+{% extends '_base/html.html.twig' %}
+
+{% block page %}
+    <article class="user-login user-login--fallback-page" data-view="">
+            <div class="login-form-wrapper">
+                {% if  error.messageKey %}
+                    <div class="success-message">{{ error.messageKey | t }}</div>
+                {% endif %}
+                {% if errors %}
+                    <div class="error-message">
+                        {% for error in errors %}
+                            {{ error.message | t }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% for message in app.flashes('success') %}
+                    <div class="success-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                <div class="login-form">
+
+                    <div id="resend">
+                        <form action="{{ path('account_resend') }}" method="post" data-user-resend-form>
+                            {% if csrf_token('authenticate') %}
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+                            {% endif %}
+
+                            <fieldset class="fieldset fieldset--full-width">
+                                <label for="username" class="fieldset__label">{{ 'Email' | t }}</label>
+                                <input type="text" id="username" name="email" class="fieldset__input" value="{{ last_username }}" placeholder="{{ 'Email' | t }}"/>
+                            </fieldset>
+
+                            <fieldset class="fieldset">
+                                <button type="submit" class="button button--brand" data-form-type="send">{{ 'Send' | t }}</button>
+                                <a href="{{ path('account_login') }}" class="button button--brand" data-form-type="cancel">{{ 'Cancel' | t }}</a>
+                            </fieldset>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+    </article>
+{% endblock %}
